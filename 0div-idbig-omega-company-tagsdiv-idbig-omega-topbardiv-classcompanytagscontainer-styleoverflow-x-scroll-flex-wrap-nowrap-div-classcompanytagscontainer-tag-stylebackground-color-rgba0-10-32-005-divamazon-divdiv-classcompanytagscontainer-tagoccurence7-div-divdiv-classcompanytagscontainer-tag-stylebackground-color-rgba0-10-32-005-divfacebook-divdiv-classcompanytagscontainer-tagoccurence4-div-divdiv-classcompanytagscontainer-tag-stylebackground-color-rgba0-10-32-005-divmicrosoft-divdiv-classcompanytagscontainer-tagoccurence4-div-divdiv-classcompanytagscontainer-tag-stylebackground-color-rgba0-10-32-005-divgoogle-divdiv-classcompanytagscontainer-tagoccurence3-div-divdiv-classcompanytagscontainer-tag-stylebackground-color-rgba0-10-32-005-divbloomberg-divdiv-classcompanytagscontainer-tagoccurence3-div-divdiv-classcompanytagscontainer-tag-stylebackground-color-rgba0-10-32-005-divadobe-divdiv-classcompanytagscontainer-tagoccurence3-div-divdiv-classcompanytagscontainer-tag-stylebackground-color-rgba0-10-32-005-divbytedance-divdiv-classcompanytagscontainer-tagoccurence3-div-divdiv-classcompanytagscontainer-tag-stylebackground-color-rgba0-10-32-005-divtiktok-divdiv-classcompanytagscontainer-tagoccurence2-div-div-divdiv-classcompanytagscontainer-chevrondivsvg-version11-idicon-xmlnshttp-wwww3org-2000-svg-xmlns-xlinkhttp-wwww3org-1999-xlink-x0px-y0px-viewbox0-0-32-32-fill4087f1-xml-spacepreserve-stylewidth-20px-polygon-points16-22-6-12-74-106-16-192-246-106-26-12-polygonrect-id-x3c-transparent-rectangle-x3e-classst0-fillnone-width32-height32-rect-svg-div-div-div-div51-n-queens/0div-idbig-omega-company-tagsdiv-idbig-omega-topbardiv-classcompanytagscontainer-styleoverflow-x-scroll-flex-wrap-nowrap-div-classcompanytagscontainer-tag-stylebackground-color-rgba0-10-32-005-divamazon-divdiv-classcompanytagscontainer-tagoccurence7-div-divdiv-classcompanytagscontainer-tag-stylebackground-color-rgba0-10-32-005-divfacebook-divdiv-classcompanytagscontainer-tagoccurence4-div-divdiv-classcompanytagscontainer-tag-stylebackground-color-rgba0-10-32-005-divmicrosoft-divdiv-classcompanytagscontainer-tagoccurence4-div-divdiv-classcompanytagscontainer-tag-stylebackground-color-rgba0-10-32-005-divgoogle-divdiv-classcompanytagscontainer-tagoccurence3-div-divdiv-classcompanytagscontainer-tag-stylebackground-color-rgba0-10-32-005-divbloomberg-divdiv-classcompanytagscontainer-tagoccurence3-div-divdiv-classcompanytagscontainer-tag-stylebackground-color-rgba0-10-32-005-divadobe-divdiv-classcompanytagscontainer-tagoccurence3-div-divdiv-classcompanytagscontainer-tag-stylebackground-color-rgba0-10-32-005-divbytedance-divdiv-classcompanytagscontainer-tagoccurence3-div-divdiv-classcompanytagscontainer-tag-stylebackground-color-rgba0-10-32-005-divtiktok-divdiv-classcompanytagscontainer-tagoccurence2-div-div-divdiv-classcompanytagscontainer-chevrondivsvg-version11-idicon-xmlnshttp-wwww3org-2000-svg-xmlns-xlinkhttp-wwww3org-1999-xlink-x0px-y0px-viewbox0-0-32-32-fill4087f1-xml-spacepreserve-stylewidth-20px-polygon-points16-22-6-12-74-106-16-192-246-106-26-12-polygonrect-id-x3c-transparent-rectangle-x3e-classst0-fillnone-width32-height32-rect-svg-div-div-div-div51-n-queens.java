@@ -6,43 +6,28 @@ class Solution {
                 board[i][j] = '.';
             }
         }
-        dfs(0,board,ans);
+        int leftRow[] = new int[n];
+        int upperDiagonal[] = new int[2 * n - 1];
+        int lowerDiagonal[] = new int[2 * n - 1];
+        dfs(0, board, ans, leftRow, lowerDiagonal, upperDiagonal);
     }
-    static boolean validate(char[][] board, int row, int col) {
-        int duprow = row;
-        int dupcol = col;
-        while (row >= 0 && col >= 0) {
-            if (board[row][col] == 'Q') return false;
-            row--;
-            col--;
-        }
-
-        row = duprow;
-        col = dupcol;
-        while (col >= 0) {
-            if (board[row][col] == 'Q') return false;
-            col--;
-        }
-
-        row = duprow;
-        col = dupcol;
-        while (col >= 0 && row < board.length) {
-            if (board[row][col] == 'Q') return false;
-            col--;
-            row++;
-        }
-        return true;
-    }
-    public void dfs(int col,char[][] board,List<List<String>> res){
-        if(col==board.length){
+    static void dfs(int col, char[][] board, List < List < String >> res, int leftRow[], int lowerDiagonal[], int upperDiagonal[]) {
+        if (col == board.length) {
             res.add(construct(board));
             return;
         }
+
         for (int row = 0; row < board.length; row++) {
-            if (validate(board, row, col)) {
+            if (leftRow[row] == 0 && lowerDiagonal[row + col] == 0 && upperDiagonal[board.length - 1 + col - row] == 0) {
                 board[row][col] = 'Q';
-                dfs(col + 1, board, res);
+                leftRow[row] = 1;
+                lowerDiagonal[row + col] = 1;
+                upperDiagonal[board.length - 1 + col - row] = 1;
+                dfs(col + 1, board, res, leftRow, lowerDiagonal, upperDiagonal);
                 board[row][col] = '.';
+                leftRow[row] = 0;
+                lowerDiagonal[row + col] = 0;
+                upperDiagonal[board.length - 1 + col - row] = 0;
             }
         }
     }
